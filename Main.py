@@ -7,6 +7,7 @@ import Comandos_Robot as Comandos_Rob
 
 
 def cargar_programa_txt(nombre_archivo) -> list:
+    "retorna lista de strings"
     try:
         with open(nombre_archivo, 'r') as archivo:
             programa = archivo.readlines()
@@ -15,7 +16,16 @@ def cargar_programa_txt(nombre_archivo) -> list:
         print(f"El archivo '{nombre_archivo}' no fue encontrado.")
         return []
 
+def limpiador_elemento(elemento) -> str:
 
+    return None
+
+def iterador_limpiar_lista(lista) -> list:
+    lista_limpia = []
+    for item in lista:
+        item_limpio = limpiador_elemento(item)
+        lista_limpia.append(item_limpio)
+    return lista_limpia
 
 def mostrar_menu():
     print("1. Cargar archivo txt")
@@ -33,9 +43,13 @@ def iniciar_aplicacion():
         mostrar_menu()
         opcion_seleccionada = int(input("Por favor seleccione una opción: "))
         if opcion_seleccionada == 1:
+            print(f"¡Asegurese que el programa este en la carpeta de P0!")
             nombre_archivo = input("Ingresa el nombre del archivo del programa: ")
-            programa = cargar_programa_txt(nombre_archivo)
-            print(programa)
+            programa_list = cargar_programa_txt(nombre_archivo)
+            print(programa_list) #quitar
+            programa_list = iterador_limpiar_lista(programa_list)
+            print(programa_list)
+
 
 iniciar_aplicacion()
 
