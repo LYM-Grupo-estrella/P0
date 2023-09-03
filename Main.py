@@ -50,7 +50,6 @@ def iniciar_aplicacion():
             programa_list = iterador_limpiar_lista(programa_list)
             print(programa_list) #quitar
 
-
 iniciar_aplicacion()
 
 
