@@ -17,8 +17,8 @@ def cargar_programa_txt(nombre_archivo) -> list:
         return []
 
 def limpiador_elemento(elemento) -> str:
-    elem_limpio = elemento.lower()
     elem_limpio = elemento.replace('\n', '').replace('\t', '')
+    elem_limpio = elemento.lower()
     delimitadores = ['(', ')', ',', ';', '{', '}', '=']
     for punct in delimitadores:
         elem_limpio = elem_limpio.replace(punct, f' {punct} ')
@@ -55,6 +55,7 @@ def iniciar_aplicacion():
             print(programa_list) #quitar
             programa_list = iterador_limpiar_lista(programa_list)
             print(programa_list) #quitar
+        
 
 iniciar_aplicacion()
 
