@@ -48,7 +48,7 @@ def iniciar_aplicacion():
             programa_list = cargar_programa_txt(nombre_archivo)
             print(programa_list) #quitar
             programa_list = iterador_limpiar_lista(programa_list)
-            print(programa_list)
+            print(programa_list) #quitar
 
 
 iniciar_aplicacion()
