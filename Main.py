@@ -17,7 +17,13 @@ def cargar_programa_txt(nombre_archivo) -> list:
         return []
 
 def limpiador_elemento(elemento) -> str:
-    elem_limpio = elemento.replace(' ', '').replace('\n', '').replace('\t', '')
+    elem_limpio = elemento.lower()
+    elem_limpio = elemento.replace('\n', '').replace('\t', '')
+    delimitadores = ['(', ')', ',', ';', '{', '}', '=']
+    for punct in delimitadores:
+        elem_limpio = elem_limpio.replace(punct, f' {punct} ')
+    elem_limpio = ' '.join(elem_limpio.split())
+    
     return elem_limpio
 
 def iterador_limpiar_lista(lista) -> list:
