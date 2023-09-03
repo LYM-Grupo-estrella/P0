@@ -49,12 +49,24 @@ def iniciar_aplicacion():
         mostrar_menu()
         opcion_seleccionada = int(input("Por favor seleccione una opción: "))
         if opcion_seleccionada == 1:
+            print(" ")
             print(f"¡Asegurese que el programa este en la carpeta de P0!")
             nombre_archivo = input("Ingresa el nombre del archivo del programa: ")
             programa_list = cargar_programa_txt(nombre_archivo)
+            print(" ")
             print(programa_list) #quitar
+            print(" ")
             programa_list = iterador_limpiar_lista(programa_list)
+            print(" ")
             print(programa_list) #quitar
+            print(" ")
+            tokens = []
+            for item in programa_list:
+                ans = Lexer.lexer(item)
+                tokens.append(ans)
+            print(" ")
+            print(tokens)
+            print(" ")
         
 
 iniciar_aplicacion()
