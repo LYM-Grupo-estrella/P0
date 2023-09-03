@@ -3,7 +3,6 @@
 
 import Lexer
 import Parser
-import Comandos_Robot as Comandos_Rob
 
 
 def cargar_programa_txt(nombre_archivo) -> list:
@@ -30,7 +29,8 @@ def iterador_limpiar_lista(lista) -> list:
     lista_limpia = []
     for item in lista:
         item_limpio = limpiador_elemento(item)
-        lista_limpia.append(item_limpio)
+        if item_limpio:
+            lista_limpia.append(item_limpio)
     return lista_limpia
 
 def mostrar_menu():
@@ -64,8 +64,9 @@ def iniciar_aplicacion():
             for item in programa_list:
                 ans = Lexer.lexer(item)
                 tokens.append(ans)
+            
             print(" ")
-            print(tokens)
+            print(tokens) #quitar
             print(" ")
         
 

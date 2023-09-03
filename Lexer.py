@@ -13,6 +13,8 @@ def lexer(programa):
             tokens.append(('COMMAND',cadena))
         elif cadena in ['facing','can','not']:
             tokens.append(('CONDITION',cadena))
+        elif cadena in ['north','south','west','east']:
+            tokens.append(('DIRECTION',cadena))
         else: 
             tokens.append(('IDENTIFIER', cadena))
     return tokens
