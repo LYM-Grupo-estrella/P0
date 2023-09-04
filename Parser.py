@@ -99,11 +99,11 @@ class Parser:
 
             self.avanzar()
 
-        if esperar_coma:
-            self.error("Se esperaba otro parámetro después de la última coma")
+        if self.siguiente_token()[1] != ")":
+            self.error("Se esperaba un ')' al final de la lista de parámetros")
 
+        self.avanzar()
         bloque_comandos = self.parse_bloque_comandos()
-        
 
 
 #BLOQUE
@@ -111,7 +111,7 @@ class Parser:
     def parse_bloque_comandos(self):
         comandos = []
         
-        if self.siguiente_token() != "{":
+        if self.siguiente_token()[1] != "{":
             self.error("Se esperaba '{' para comenzar un bloque de comandos")
         self.avanzar()
         
