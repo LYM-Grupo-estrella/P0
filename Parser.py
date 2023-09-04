@@ -161,7 +161,8 @@ class Parser:
                 else:
                     self.error(f"Se esperaba una dirección válida después de 'walk', pero se encontró {self.siguiente_token()[1]}")
 
-            # ... (otros comandos)
+            elif token_actual[1] == "walk":
+                None
 
         else:
             self.error(f"Comando no reconocido: {token_actual[1]}")

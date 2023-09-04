@@ -12,7 +12,9 @@ defProc putCB (c , b )
 
 defProc goNorth ()
 { 
- 	while can(walk(1, north ) ) { walk(1, north ) } 18 }
+ 	while can(walk(1, north ) ) { walk(1, north ) } 
+	
+}
 
  defProc goWest ()
 { 
