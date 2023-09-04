@@ -1,6 +1,6 @@
 class Lexer:
     
-    def lexer(self,programa):
+    def lexer(self,programa):  #"self" representa la instancia actual de la clase Lexer
         tokens = []
         for cadena in programa.split():
             if cadena in ['defvar', 'defproc', 'if', 'else', 'while', 'repeat']:
