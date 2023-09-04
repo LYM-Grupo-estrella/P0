@@ -2,6 +2,7 @@
 # Karen Fuentes (202122467)
 # Paula Estupiñan (202212331)
 
+#Importar Lexer y Parser
 from Lexer import Lexer
 from Parser import Parser
 
@@ -16,6 +17,8 @@ def cargar_programa_txt(nombre_archivo) -> list:
         return []
 
 def limpiador_elemento(elemento) -> str:
+    """Limpia espacios vacios, tabulaciones y saltos de linea. 
+    Además formatea para dejar espacios entre cada terminal """
     elem_limpio = elemento.replace('\n', '').replace('\t', '')
     elem_limpio = elem_limpio.lower()
     delimitadores = ['(', ')', ',', ';', '{', '}', '=']
@@ -25,6 +28,7 @@ def limpiador_elemento(elemento) -> str:
     return elem_limpio
 
 def iterador_limpiar_lista(lista) -> list:
+    "Iterador"
     lista_limpia = []
     for item in lista:
         item_limpio = limpiador_elemento(item)
@@ -87,6 +91,8 @@ def iniciar_aplicacion():
             print(" ")
             print(tokens)
             print(" ")
+
+            parser = Parser(tokens)
 
             es_correcto, mensaje = verificar_gramatica(tokens)
             if es_correcto:

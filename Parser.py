@@ -3,10 +3,14 @@ class Parser:
     def __init__(self, tokens):
         self.tokens = tokens
         self.pos_actual = 0
+        self.variables_definidas = set()
+        self.procedimientos_definidos = set()
+        print("Tokens recibidos por el Parser:", self.tokens)
+        
 
     def siguiente_token(self):
         if self.pos_actual < len(self.tokens):
-            return self.tokens[self.pos_actual].lower()  # Convertir a minúsculas para manejar insensibilidad de mayúsculas/minúsculas
+            return self.tokens[self.pos_actual]
         return None
 
     def avanzar(self):
@@ -18,46 +22,66 @@ class Parser:
     # ... (resto del código)
 
     def parse_programa(self):
-        definiciones = []
-        comandos = []
-        while self.siguiente_token() is not None:
-            if self.siguiente_token() == "defvar":
-                definicion = self.parse_definicion_variable()
-                if definicion:
-                    definiciones.append(definicion)
-            elif self.siguiente_token() == "defproc":
-                definicion = self.parse_definicion_procedimiento()
-                if definicion:
-                    definiciones.append(definicion)
-            else:
-                comando = self.parse_comando()
-                if comando:
-                    comandos.append(comando)
-            self.avanzar()  # Mover esta línea aquí para avanzar al siguiente token
-        return definiciones, comandos
+        try:
+            while self.siguiente_token() is not None:
+                token_actual = self.siguiente_token()
+                
+                if token_actual[0] == 'KEYWORD':
+                    if token_actual[1] == "defvar":
+                        self.parse_definicion_variable()
+                    elif token_actual[1] == "defproc":
+                        self.parse_definicion_procedimiento()
+                    else:
+                        self.error(f"Token no reconocido: {token_actual[1]}")
+                else:
+                    self.parse_comando()
+                
+                self.avanzar()  # Avanzar al siguiente token
 
-    def parse_definicion_procedimiento(self):
-        self.avanzar()
-        nombre = self.siguiente_token()
-        if not nombre:
-            self.error("Se esperaba un nombre de procedimiento después de 'defProc'")
-        self.avanzar()
-        parametros = self.siguiente_token().strip("()").split(",")  # Asumiendo que los parámetros están entre paréntesis y separados por comas
-        # No avanzar aquí
-        # self.avanzar()
-        bloque_comandos = self.parse_bloque_comandos()
-        return ("Procedimiento", nombre, parametros, bloque_comandos)
+            return True  # Si todo es correcto    
+
+        except Exception as e:
+            print(f"Error: {e}")  # Imprime el error
+            return False  # Indica que hubo un error
+
+#KEYWORDS
 
     def parse_definicion_variable(self):
         self.avanzar()
-        nombre = self.siguiente_token()
-        if not nombre:
+
+        if self.siguiente_token()[0] != 'IDENTIFIER':
             self.error("Se esperaba un nombre de variable después de 'defVar'")
+
+        nombre = self.siguiente_token()[1]
+
+         # Verificar si la variable ya ha sido definida
+        if nombre in self.variables_definidas:
+            self.error(f"Variable '{nombre}' ya ha sido definida anteriormente")
+
         self.avanzar()
-        valor = self.siguiente_token()
-        if not valor:
+
+        if self.siguiente_token()[0] != 'CONSTANT':
             self.error(f"Se esperaba un valor inicial para la variable '{nombre}'")
-        return ("Variable", nombre, valor)
+        valor = self.siguiente_token()[1]
+
+        self.variables_definidas.add(nombre)
+
+    def parse_definicion_procedimiento(self):
+        self.avanzar()
+
+        if self.siguiente_token()[0] != 'IDENTIFIER':
+            self.error("Se esperaba un nombre de procedimiento después de 'defProc'")
+        nombre = self.siguiente_token()[1]
+
+        self.avanzar()
+        if not self.siguiente_token()[1].startswith("(") or not self.siguiente_token()[1].endswith(")"):
+            self.error("Se esperaban parámetros entre paréntesis después del nombre del procedimiento")
+        parametros = self.siguiente_token()[1].strip("()").split(",")  # Extraer parámetros
+    
+        self.avanzar()
+        bloque_comandos = self.parse_bloque_comandos()
+
+#BLOQUE
 
     def parse_bloque_comandos(self):
         comandos = []
@@ -83,4 +107,8 @@ class Parser:
         # Agregar otros comandos aquí
         return None
 
+Tokens = [('KEYWORD', 'defvar'), ('IDENTIFIER', 'nom'), ('CONSTANT', '1'), ('KEYWORD', 'defproc'), ('IDENTIFIER', 'putcb'), ('PUNCTUATOR', '('), ('IDENTIFIER', 'c'), ('PUNCTUATOR', ','), ('IDENTIFIER', 'b'),('PUNCTUATOR', ')')]
+parser = Parser(Tokens)
+parser.parse_programa()
+print("Variables definidas:", parser.variables_definidas)
 

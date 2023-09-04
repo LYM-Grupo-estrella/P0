@@ -1,6 +1,13 @@
 class Lexer:
     
     def lexer(self,programa):
+
+        """Recibe una lista formateada de cada linea del programa, 
+        se separa por espacios y categoriza de acuerdo a su funcionalidad entre: 
+        KEYWORD, OPERATOR, CONSTANT, PUNCTUATOR, COMMAND, CONDITION, DIRECTION, 
+        y si no cumple con cualquiera de las condiciones establecidas se asigna como IDENTIFIER.
+        Retorna una lista de tokens con el formato (TOKEN,cadena)"""
+
         tokens = []
         for cadena in programa.split():
             if cadena in ['defvar', 'defproc', 'if', 'else', 'while', 'repeat']:
