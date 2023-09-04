@@ -33,6 +33,7 @@ def iterador_limpiar_lista(lista) -> list:
     return lista_limpia
 
 def mostrar_menu():
+    print(" ")
     print("1. Cargar archivo txt")
     print("2. Salir")
 
@@ -51,6 +52,7 @@ def verificar_gramatica(tokens):
     return True, "La gramática es correcta y la correspondencia de llaves es válida."
 
 def iniciar_aplicacion():
+    print(" ")
     print("¡Bienvenido!")
 
     continuar = True
@@ -59,6 +61,7 @@ def iniciar_aplicacion():
 
     while continuar:
         mostrar_menu()
+        print(" ")
         opcion_seleccionada = (input("Por favor seleccione una opción: "))
         
         if not opcion_seleccionada.isdigit():
