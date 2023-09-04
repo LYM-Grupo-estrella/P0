@@ -1,9 +1,9 @@
 # Proyecto 0 - View
 # Karen Fuentes (202122467)
+# Paula Estupiñan (202212331)
 
-import Lexer
-import Parser
-
+from Lexer import Lexer
+from Parser import Parser
 
 def cargar_programa_txt(nombre_archivo) -> list:
     "retorna lista de strings"
@@ -17,12 +17,11 @@ def cargar_programa_txt(nombre_archivo) -> list:
 
 def limpiador_elemento(elemento) -> str:
     elem_limpio = elemento.replace('\n', '').replace('\t', '')
-    elem_limpio = elemento.lower()
+    elem_limpio = elem_limpio.lower()
     delimitadores = ['(', ')', ',', ';', '{', '}', '=']
     for punct in delimitadores:
         elem_limpio = elem_limpio.replace(punct, f' {punct} ')
     elem_limpio = ' '.join(elem_limpio.split())
-    
     return elem_limpio
 
 def iterador_limpiar_lista(lista) -> list:
@@ -41,34 +40,43 @@ def iniciar_aplicacion():
     print("¡Bienvenido!")
 
     continuar = True
-
-    #lexer = Lexer()
-    #parser = Parser()
+    lexer_instance = Lexer()
+    parser = Parser([])  # Inicializamos con una lista vacía
 
     while continuar:
         mostrar_menu()
-        opcion_seleccionada = int(input("Por favor seleccione una opción: "))
+        opcion_seleccionada = (input("Por favor seleccione una opción: "))
+        
+        if not opcion_seleccionada.isdigit():
+            print("Por favor, ingrese un número válido.")
+            continue
+
+        opcion_seleccionada = int(opcion_seleccionada)
+        
         if opcion_seleccionada == 1:
             print(" ")
             print(f"¡Asegurese que el programa este en la carpeta de P0!")
             nombre_archivo = input("Ingresa el nombre del archivo del programa: ")
             programa_list = cargar_programa_txt(nombre_archivo)
             print(" ")
-            print(programa_list) #quitar
+            print(programa_list)
             print(" ")
             programa_list = iterador_limpiar_lista(programa_list)
             print(" ")
-            print(programa_list) #quitar
+            print(programa_list)
             print(" ")
             tokens = []
             for item in programa_list:
-                ans = Lexer.lexer(item)
-                tokens.append(ans)
+                ans = lexer_instance.lexer(item)
+                tokens.extend(ans)  # Usamos extend en lugar de append para agregar todos los tokens a la lista
             
             print(" ")
-            print(tokens) #quitar
+            print(tokens)
             print(" ")
-        
+        elif opcion_seleccionada == 2:
+            continuar = False
+        else:
+            print("Opción no válida. Por favor, intente de nuevo.")
 
 iniciar_aplicacion()
 
