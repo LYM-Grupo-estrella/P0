@@ -17,7 +17,8 @@ class Parser:
         self.pos_actual += 1
 
     def error(self, mensaje):
-        raise Exception(f"Error de sintaxis en la posición {self.pos_actual}: {mensaje}")
+        raise Exception(f"Error de sintaxis en la posición {self.pos_actual}: {mensaje}, ")
+
 
     # ... (resto del código)
 
@@ -68,47 +69,135 @@ class Parser:
 
     def parse_definicion_procedimiento(self):
         self.avanzar()
-
+        
         if self.siguiente_token()[0] != 'IDENTIFIER':
             self.error("Se esperaba un nombre de procedimiento después de 'defProc'")
         nombre = self.siguiente_token()[1]
+        
+        self.avanzar()
+        if self.siguiente_token()[1] != "(":
+            self.error("Se esperaba un '(' después del nombre del procedimiento")
+        
+        self.avanzar()
+        parametros = []
+        esperar_coma = False
 
-        self.avanzar()
-        if not self.siguiente_token()[1].startswith("(") or not self.siguiente_token()[1].endswith(")"):
-            self.error("Se esperaban parámetros entre paréntesis después del nombre del procedimiento")
-        parametros = self.siguiente_token()[1].strip("()").split(",")  # Extraer parámetros
-    
-        self.avanzar()
+        while self.siguiente_token()[1] != ")":
+            tipo_token, valor_token = self.siguiente_token()
+
+            if tipo_token in ['IDENTIFIER', 'CONSTANT']:
+                if esperar_coma:
+                    self.error("Se esperaba una ',' entre los parámetros")
+                parametros.append(valor_token)
+                esperar_coma = True
+            elif valor_token == ",":
+                if not esperar_coma:
+                    self.error("Coma inesperada o parámetros consecutivos sin comas")
+                esperar_coma = False
+            else:
+                self.error(f"Token no válido en la lista de parámetros: {valor_token}")
+
+            self.avanzar()
+
+        if esperar_coma:
+            self.error("Se esperaba otro parámetro después de la última coma")
+
         bloque_comandos = self.parse_bloque_comandos()
+        
+
 
 #BLOQUE
 
     def parse_bloque_comandos(self):
         comandos = []
+        
         if self.siguiente_token() != "{":
             self.error("Se esperaba '{' para comenzar un bloque de comandos")
         self.avanzar()
-        while self.siguiente_token() != "}":
+        
+        while self.siguiente_token() and self.siguiente_token() != "}":
             comando = self.parse_comando()
             if comando:
                 comandos.append(comando)
             else:
                 self.error(f"Comando no válido: {self.siguiente_token()}")
             self.avanzar()
+        
+        if not self.siguiente_token() or self.siguiente_token() != "}":
+            self.error("Se esperaba '}' para cerrar el bloque de comandos")
+        self.avanzar()  # Salir del bloque
+        
         return comandos
 
+
     def parse_comando(self):
-        # Aquí deberías agregar la lógica para analizar cada tipo de comando
-        # Por simplicidad, solo manejaré el comando "walk" como ejemplo
-        if self.siguiente_token() == "walk":
-            self.avanzar()
-            parametros = self.siguiente_token().strip("()").split(",")
-            return ("walk", parametros)
-        # Agregar otros comandos aquí
-        return None
+        token_actual = self.siguiente_token()
+
+        if token_actual[0] == "COMMAND":
+            if token_actual[1] == "jump":
+                self.avanzar()
+                
+                # Verificar x
+                if self.siguiente_token()[0] != 'CONSTANT':
+                    self.error("Se esperaba un valor para x después de 'jump'")
+                self.avanzar()
+                
+                # Verificar y
+                if self.siguiente_token()[0] != 'CONSTANT':
+                    self.error("Se esperaba un valor para y después de x en 'jump'")
+                self.avanzar()
+
+            elif token_actual[1] == "walk":
+                self.avanzar()
+                
+                # Verificar v
+                if self.siguiente_token()[0] != 'CONSTANT':
+                    self.error("Se esperaba un valor para v después de 'walk'")
+                self.avanzar()
+                
+                # Verificar dirección D u O
+                if self.siguiente_token()[0] == "DIRECTION" or self.siguiente_token()[1] in ["front", "right", "left", "back"]:
+                    self.avanzar()
+                else:
+                    self.error(f"Se esperaba una dirección válida después de 'walk', pero se encontró {self.siguiente_token()[1]}")
+
+            # ... (otros comandos)
+
+        else:
+            self.error(f"Comando no reconocido: {token_actual[1]}")
+
+
+
+       
+
+#AUXILIARES
+
+def manejar_parentesis(self):
+    contador = 0
+    parametros = []
+
+    while self.siguiente_token() is not None:
+        token_actual = self.siguiente_token()[1]
+
+        if token_actual == "(":
+            contador += 1
+        elif token_actual == ")":
+            contador -= 1
+            if contador == 0:  # Si hemos cerrado todos los paréntesis abiertos
+                break
+        else:
+            parametros.append(token_actual)
+
+        self.avanzar()
+
+    if contador != 0:
+        self.error("Los paréntesis no están correctamente emparejados")
+
+    return parametros
+
 
 Tokens = [('KEYWORD', 'defvar'), ('IDENTIFIER', 'nom'), ('CONSTANT', '1'), ('KEYWORD', 'defproc'), ('IDENTIFIER', 'putcb'), ('PUNCTUATOR', '('), ('IDENTIFIER', 'c'), ('PUNCTUATOR', ','), ('IDENTIFIER', 'b'),('PUNCTUATOR', ')')]
 parser = Parser(Tokens)
 parser.parse_programa()
-print("Variables definidas:", parser.variables_definidas)
+#print("Variables definidas:", parser.variables_definidas)
 

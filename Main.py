@@ -93,6 +93,8 @@ def iniciar_aplicacion():
             print(" ")
 
             parser = Parser(tokens)
+            res = parser.parse_programa()
+            print(res)
 
             es_correcto, mensaje = verificar_gramatica(tokens)
             if es_correcto:
