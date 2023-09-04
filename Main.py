@@ -36,6 +36,22 @@ def mostrar_menu():
     print("1. Cargar archivo txt")
     print("2. Salir")
 
+def verificar_gramatica(tokens):
+    stack = []
+    for token, value in tokens:
+        if token == "PUNCTUATOR":
+            if value == "{":
+                stack.append(value)
+            elif value == "}":
+                if not stack or stack[-1] != "{":
+                    return False, "Error: Se encontró un '}' sin un '{' correspondiente."
+                stack.pop()
+    if stack:
+        return False, "Error: Se encontró un '{' sin un '}' correspondiente."
+    return True, "La gramática es correcta."
+
+# ... (resto del código)
+
 def iniciar_aplicacion():
     print("¡Bienvenido!")
 
@@ -73,13 +89,17 @@ def iniciar_aplicacion():
             print(" ")
             print(tokens)
             print(" ")
+
+            es_correcto, mensaje = verificar_gramatica(tokens)
+            if es_correcto:
+                print("La gramática es correcta.")
+            else:
+                print(mensaje)
+
         elif opcion_seleccionada == 2:
             continuar = False
         else:
             print("Opción no válida. Por favor, intente de nuevo.")
 
 iniciar_aplicacion()
-
-
-
 
