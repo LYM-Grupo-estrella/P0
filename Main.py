@@ -36,29 +36,19 @@ def mostrar_menu():
     print("1. Cargar archivo txt")
     print("2. Salir")
 
-
-# ... Código anterior ...
-
 def verificar_gramatica(tokens):
     stack = []
     for token, value in tokens:
         if token == "PUNCTUATOR":
             if value == "{":
                 stack.append(value)
-                print(f"Pushed '{{' onto stack. Current stack: {stack}")
             elif value == "}":
                 if not stack or stack[-1] != "{":
-                    print(f"Error: Se encontró un '}}' sin un '{{' correspondiente. Token: {value}")
                     return False, "Error: Se encontró un '{' sin un '}' correspondiente."
                 stack.pop()
-                print(f"Popped '{{' from stack. Current stack: {stack}")
     if stack:
         return False, f"Error: Se encontró un '{{' sin un '}}' correspondiente. Token: {stack[-1]}"
     return True, "La gramática es correcta y la correspondencia de llaves es válida."
-
-# ... Resto del código ...
-
-
 
 def iniciar_aplicacion():
     print("¡Bienvenido!")
