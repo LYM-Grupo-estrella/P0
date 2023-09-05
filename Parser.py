@@ -7,7 +7,6 @@ class Parser:
         self.procedimientos_definidos = set()
         print("Tokens recibidos por el Parser:", self.tokens)
         
-
     def siguiente_token(self):
         if self.pos_actual < len(self.tokens):
             return self.tokens[self.pos_actual]
@@ -19,9 +18,11 @@ class Parser:
     def error(self, mensaje):
         raise Exception(f"Error de sintaxis en la posición {self.pos_actual}: {mensaje}, ")
 
-
-    # ... (resto del código)
-
+    def verificar_punctuator(self, expected_punctuator):
+        if self.siguiente_token()[0] != "PUNCTUATOR":
+            self.error(f"Se esperaba un punctuator '{expected_punctuator}'")
+        self.avanzar()
+        
     def parse_programa(self):
         try:
             while self.siguiente_token() is not None:
@@ -138,6 +139,8 @@ class Parser:
             # Command jump
             if token_actual[1] == "jump":
                 self.avanzar()
+                # Verificar punctuator 'jump'
+                self.verificar_punctuator('jump')
                 # Verificar x
                 if self.siguiente_token()[0] != "CONSTANT":
                     self.error("Se esperaba un valor para x después de 'jump'")
@@ -146,10 +149,14 @@ class Parser:
                 if self.siguiente_token()[0] != "CONSTANT":
                     self.error("Se esperaba un valor para y después de x en 'jump'")
                 self.avanzar()
+                # Verificar punctuator 'jump'
+                self.verificar_punctuator('jump')
 
             # Command walk
             elif token_actual[1] == "walk":
                 self.avanzar()
+                # Verificar punctuator 'walk'
+                self.verificar_punctuator('walk')
                 # Verificar el valor v
                 if self.siguiente_token()[0] != "CONSTANT":
                     self.error("Se esperaba un valor para v después de 'walk'")
@@ -169,10 +176,14 @@ class Parser:
                         self.error(f"Se esperaba una dirección válida después de 'walk', pero se encontró {self.siguiente_token()[1]}")
                 else:
                     self.error(f"Se esperaba una dirección válida después de 'walk', pero se encontró {self.siguiente_token()[1]}")
+                # Verificar punctuator 'walk'
+                self.verificar_punctuator('walk')
             
             # Command leap 
             elif token_actual[1] == "leap":
                 self.avanzar()
+                # Verificar punctuator 'leap'
+                self.verificar_punctuator('leap')
                 # Verificar el valor v
                 if self.siguiente_token()[0] != "CONSTANT":
                     self.error("Se esperaba un valor para v después de 'leap'")
@@ -192,10 +203,14 @@ class Parser:
                         self.error(f"Se esperaba una dirección válida después de 'leap', pero se encontró {self.siguiente_token()[1]}")
                 else:
                     self.error(f"Se esperaba una dirección válida después de 'leap', pero se encontró {self.siguiente_token()[1]}")
+                # Verificar punctuator 'leap'
+                self.verificar_punctuator('leap')
 
             # Command turn 
             elif token_actual[1] == "turn":
                 self.avanzar()
+                # Verificar punctuator 'turn'
+                self.verificar_punctuator('turn')
                 # Verificar dirección D
                 if self.siguiente_token()[0] == "DIRECTION":
                     if self.siguiente_token()[1] in ["left", "right", "around"]:
@@ -205,10 +220,14 @@ class Parser:
                         self.error(f"Se esperaba 'left', 'right' o 'around' después de 'turn', pero se encontró {self.siguiente_token()[1]}")
                 else:
                     self.error(f"Se esperaba una dirección válida después de 'turn', pero se encontró {self.siguiente_token()[1]}")
+                # Verificar punctuator 'turn'
+                self.verificar_punctuator('turn')
 
             # Command turnto
             elif token_actual[1] == "turnto":
                 self.avanzar()
+                # Verificar punctuator 'turnto'
+                self.verificar_punctuator('turnto')
                 # Verificar dirección O
                 if self.siguiente_token()[0] == "DIRECTION":
                     if self.siguiente_token()[1] in ["north", "south", "east", "west"]:
@@ -218,38 +237,56 @@ class Parser:
                         self.error(f"Se esperaba 'north', 'south', 'east' o 'west' después de 'turnto', pero se encontró {self.siguiente_token()[1]}")
                 else:
                     self.error(f"Se esperaba una dirección válida después de 'turnto', pero se encontró {self.siguiente_token()[1]}")
+                # Verificar punctuator 'turnto'
+                self.verificar_punctuator('turnto')
 
             # Command drop
             elif token_actual[1] == "drop":
                 self.avanzar()
+                # Verificar punctuator 'drop'
+                self.verificar_punctuator('drop')
                 # Verificar valor v
-                if self.siguiente_token()[0] != "CONSTANT":
-                    self.error("Se esperaba un valor para v después de 'drop'")
+                if (self.siguiente_token()[0] != "IDENTIFIER") and (self.siguiente_token()[0] != "CONSTANT"):
+                    self.error("Se esperaba un valor o identificador para v después de 'drop'")
                 self.avanzar()
+                # Verificar punctuator 'drop'
+                self.verificar_punctuator('drop')
 
             # Command get
             elif token_actual[1] == "get":
                 self.avanzar()
+                # Verificar punctuator 'get'
+                self.verificar_punctuator('get')
                 # Verificar valor v
-                if self.siguiente_token()[0] != "CONSTANT":
-                    self.error("Se esperaba un valor para v después de 'get'")
+                if (self.siguiente_token()[0] != "IDENTIFIER") and (self.siguiente_token()[0] != "CONSTANT"):
+                    self.error("Se esperaba un valor o identificador para v después de 'get'")
                 self.avanzar()
+                # Verificar punctuator 'get'
+                self.verificar_punctuator('get')
 
             # Command grab
             elif token_actual[1] == "grab":
                 self.avanzar()
+                # Verificar punctuator 'grab'
+                self.verificar_punctuator('grab')
                 # Verificar valor v
-                if self.siguiente_token()[0] != "CONSTANT":
-                    self.error("Se esperaba un valor para v después de 'grab'")
+                if (self.siguiente_token()[0] != "IDENTIFIER") and (self.siguiente_token()[0] != "CONSTANT"):
+                    self.error("Se esperaba un valor o identificador para v después de 'grab'")
                 self.avanzar()
-
+                # Verificar punctuator 'grab'
+                self.verificar_punctuator('grab')
+                
             # Command letGo
             elif token_actual[1] == "letGo":
                 self.avanzar()
+                # Verificar punctuator 'letGo'
+                self.verificar_punctuator('letGo')
                 # Verificar valor v
-                if self.siguiente_token()[0] != "CONSTANT":
-                    self.error("Se esperaba un valor para v después de 'letGo'")
+                if (self.siguiente_token()[0] != "IDENTIFIER") and (self.siguiente_token()[0] != "CONSTANT"):
+                    self.error("Se esperaba un valor o identificador para v después de 'letGo'")
                 self.avanzar()
+                # Verificar punctuator 'letGo'
+                self.verificar_punctuator('letGo')
                 
             # Command nop
             elif token_actual[1] == "nop":
