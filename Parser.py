@@ -23,6 +23,11 @@ class Parser:
             self.error(f"Se esperaba un punctuator '{expected_punctuator}'")
         self.avanzar()
         
+    def tomar_si_es_punto_y_coma(self):
+        # Verifica si el siguiente token es un punto y coma
+        if self.siguiente_token()[0] == "PUNCTUATOR" and self.siguiente_token()[1] == ';':
+            self.avanzar()
+        
     def parse_programa(self):
         try:
             while self.siguiente_token() is not None:
@@ -151,6 +156,7 @@ class Parser:
                 self.avanzar()
                 # Verificar punctuator 'jump'
                 self.verificar_punctuator('jump')
+                self.tomar_si_es_punto_y_coma()
 
             # Command walk
             elif token_actual[1] == "walk":
@@ -178,6 +184,7 @@ class Parser:
                     self.error(f"Se esperaba una dirección válida después de 'walk', pero se encontró {self.siguiente_token()[1]}")
                 # Verificar punctuator 'walk'
                 self.verificar_punctuator('walk')
+                self.tomar_si_es_punto_y_coma()
             
             # Command leap 
             elif token_actual[1] == "leap":
@@ -205,6 +212,7 @@ class Parser:
                     self.error(f"Se esperaba una dirección válida después de 'leap', pero se encontró {self.siguiente_token()[1]}")
                 # Verificar punctuator 'leap'
                 self.verificar_punctuator('leap')
+                self.tomar_si_es_punto_y_coma()
 
             # Command turn 
             elif token_actual[1] == "turn":
@@ -222,6 +230,7 @@ class Parser:
                     self.error(f"Se esperaba una dirección válida después de 'turn', pero se encontró {self.siguiente_token()[1]}")
                 # Verificar punctuator 'turn'
                 self.verificar_punctuator('turn')
+                self.tomar_si_es_punto_y_coma()
 
             # Command turnto
             elif token_actual[1] == "turnto":
@@ -239,6 +248,7 @@ class Parser:
                     self.error(f"Se esperaba una dirección válida después de 'turnto', pero se encontró {self.siguiente_token()[1]}")
                 # Verificar punctuator 'turnto'
                 self.verificar_punctuator('turnto')
+                self.tomar_si_es_punto_y_coma()
 
             # Command drop
             elif token_actual[1] == "drop":
@@ -251,6 +261,7 @@ class Parser:
                 self.avanzar()
                 # Verificar punctuator 'drop'
                 self.verificar_punctuator('drop')
+                self.tomar_si_es_punto_y_coma()
 
             # Command get
             elif token_actual[1] == "get":
@@ -263,6 +274,7 @@ class Parser:
                 self.avanzar()
                 # Verificar punctuator 'get'
                 self.verificar_punctuator('get')
+                self.tomar_si_es_punto_y_coma()
 
             # Command grab
             elif token_actual[1] == "grab":
@@ -275,6 +287,7 @@ class Parser:
                 self.avanzar()
                 # Verificar punctuator 'grab'
                 self.verificar_punctuator('grab')
+                self.tomar_si_es_punto_y_coma()
                 
             # Command letGo
             elif token_actual[1] == "letGo":
@@ -287,6 +300,7 @@ class Parser:
                 self.avanzar()
                 # Verificar punctuator 'letGo'
                 self.verificar_punctuator('letGo')
+                self.tomar_si_es_punto_y_coma()
                 
             # Command nop
             elif token_actual[1] == "nop":
