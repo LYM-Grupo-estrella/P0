@@ -134,42 +134,131 @@ class Parser:
         token_actual = self.siguiente_token()
 
         if token_actual[0] == "COMMAND":
+            
+            # Command jump
             if token_actual[1] == "jump":
                 self.avanzar()
-                
                 # Verificar x
-                if self.siguiente_token()[0] != 'CONSTANT':
+                if self.siguiente_token()[0] != "CONSTANT":
                     self.error("Se esperaba un valor para x después de 'jump'")
                 self.avanzar()
-                
                 # Verificar y
-                if self.siguiente_token()[0] != 'CONSTANT':
+                if self.siguiente_token()[0] != "CONSTANT":
                     self.error("Se esperaba un valor para y después de x en 'jump'")
                 self.avanzar()
 
+            # Command walk
             elif token_actual[1] == "walk":
                 self.avanzar()
-                
-                # Verificar v
-                if self.siguiente_token()[0] != 'CONSTANT':
+                # Verificar el valor v
+                if self.siguiente_token()[0] != "CONSTANT":
                     self.error("Se esperaba un valor para v después de 'walk'")
                 self.avanzar()
-                
+                # Si no hay más tokens después, significa que el formato es walk(v)
+                if self.siguiente_token() is None:
+                    return
                 # Verificar dirección D u O
-                if self.siguiente_token()[0] == "DIRECTION" or self.siguiente_token()[1] in ["front", "right", "left", "back"]:
-                    self.avanzar()
+                if self.siguiente_token()[0] == "DIRECTION":
+                    if self.siguiente_token()[1] in ["front", "right", "left", "back"]:
+                        # Maneja el caso para walk(v, D)
+                        self.avanzar()
+                    elif self.siguiente_token()[1] in ["north", "south", "west", "east"]:
+                        # Maneja el caso para walk(v, O)
+                        self.avanzar()
+                    else:
+                        self.error(f"Se esperaba una dirección válida después de 'walk', pero se encontró {self.siguiente_token()[1]}")
                 else:
                     self.error(f"Se esperaba una dirección válida después de 'walk', pero se encontró {self.siguiente_token()[1]}")
+            
+            # Command leap 
+            elif token_actual[1] == "leap":
+                self.avanzar()
+                # Verificar el valor v
+                if self.siguiente_token()[0] != "CONSTANT":
+                    self.error("Se esperaba un valor para v después de 'leap'")
+                self.avanzar()
+                # Si no hay más tokens después, significa que el formato es leap(v)
+                if self.siguiente_token() is None:
+                    return
+                # Comprobar dirección D u O
+                if self.siguiente_token()[0] == "DIRECTION":
+                    if self.siguiente_token()[1] in ["front", "right", "left", "back"]:
+                        # Manejar el caso para leap(v, D)
+                        self.avanzar()
+                    elif self.siguiente_token()[1] in ["north", "south", "west", "east"]:
+                        # Manejar el caso para leap(v, O)
+                        self.avanzar()
+                    else:
+                        self.error(f"Se esperaba una dirección válida después de 'leap', pero se encontró {self.siguiente_token()[1]}")
+                else:
+                    self.error(f"Se esperaba una dirección válida después de 'leap', pero se encontró {self.siguiente_token()[1]}")
 
-            elif token_actual[1] == "walk":
-                None
+            # Command turn 
+            elif token_actual[1] == "turn":
+                self.avanzar()
+                # Verificar dirección D
+                if self.siguiente_token()[0] == "DIRECTION":
+                    if self.siguiente_token()[1] in ["left", "right", "around"]:
+                        # El robot debe girar 90 grados en la dirección indicada por el parámetro D
+                        self.avanzar()
+                    else:
+                        self.error(f"Se esperaba 'left', 'right' o 'around' después de 'turn', pero se encontró {self.siguiente_token()[1]}")
+                else:
+                    self.error(f"Se esperaba una dirección válida después de 'turn', pero se encontró {self.siguiente_token()[1]}")
+
+            # Command turnto
+            elif token_actual[1] == "turnto":
+                self.avanzar()
+                # Verificar dirección O
+                if self.siguiente_token()[0] == "DIRECTION":
+                    if self.siguiente_token()[1] in ["north", "south", "east", "west"]:
+                        # El robot debe girar para terminar mirando en la dirección indicada por el parámetro O
+                        self.avanzar()
+                    else:
+                        self.error(f"Se esperaba 'north', 'south', 'east' o 'west' después de 'turnto', pero se encontró {self.siguiente_token()[1]}")
+                else:
+                    self.error(f"Se esperaba una dirección válida después de 'turnto', pero se encontró {self.siguiente_token()[1]}")
+
+            # Command drop
+            elif token_actual[1] == "drop":
+                self.avanzar()
+                # Verificar valor v
+                if self.siguiente_token()[0] != "CONSTANT":
+                    self.error("Se esperaba un valor para v después de 'drop'")
+                self.avanzar()
+
+            # Command get
+            elif token_actual[1] == "get":
+                self.avanzar()
+                # Verificar valor v
+                if self.siguiente_token()[0] != "CONSTANT":
+                    self.error("Se esperaba un valor para v después de 'get'")
+                self.avanzar()
+
+            # Command grab
+            elif token_actual[1] == "grab":
+                self.avanzar()
+                # Verificar valor v
+                if self.siguiente_token()[0] != "CONSTANT":
+                    self.error("Se esperaba un valor para v después de 'grab'")
+                self.avanzar()
+
+            # Command letGo
+            elif token_actual[1] == "letGo":
+                self.avanzar()
+                # Verificar valor v
+                if self.siguiente_token()[0] != "CONSTANT":
+                    self.error("Se esperaba un valor para v después de 'letGo'")
+                self.avanzar()
+                
+            # Command nop
+            elif token_actual[1] == "nop":
+                self.avanzar()
+                # No requiere ningún otro token o verificación. No realiza ninguna acción
 
         else:
             self.error(f"Comando no reconocido: {token_actual[1]}")
 
-
-
-       
 
 #AUXILIARES
 
