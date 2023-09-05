@@ -2,9 +2,12 @@
 # Karen Fuentes (202122467)
 # Paula Estupiñan (202212331)
 
-#Importar Lexer y Parser
+#IMPORTAR LEXER Y PARSER
+
 from Lexer import Lexer
 from Parser import Parser
+
+ #FUNCIONES PARA CARGAR Y FORMATEAR LISTA 
 
 def cargar_programa_txt(nombre_archivo) -> list:
     "retorna lista de strings"
@@ -36,9 +39,7 @@ def iterador_limpiar_lista(lista) -> list:
             lista_limpia.append(item_limpio)
     return lista_limpia
 
-def mostrar_menu():
-    print("1. Cargar archivo txt")
-    print("2. Salir")
+# VERIFICADOR DE GRAMATICA --> {...}
 
 def verificar_gramatica(tokens):
     stack = []
@@ -53,6 +54,14 @@ def verificar_gramatica(tokens):
     if stack:
         return False, f"Error: Se encontró un '{{' sin un '}}' correspondiente. Token: {stack[-1]}"
     return True, "La gramática es correcta y la correspondencia de llaves es válida."
+
+ # MENÚ 
+
+def mostrar_menu():
+    print("1. Cargar archivo txt")
+    print("2. Salir")
+
+# INICIALIZAR APLICACIÓN
 
 def iniciar_aplicacion():
     print("¡Bienvenido!")
@@ -75,26 +84,24 @@ def iniciar_aplicacion():
             print(" ")
             print(f"¡Asegurese que el programa este en la carpeta de P0!")
             nombre_archivo = input("Ingresa el nombre del archivo del programa: ")
+
+            #CARGAR ARCHIVO TXT Y FORMATEAR
+
             programa_list = cargar_programa_txt(nombre_archivo)
-            print(" ")
-            print(programa_list)
-            print(" ")
             programa_list = iterador_limpiar_lista(programa_list)
-            print(" ")
-            print(programa_list)
-            print(" ")
+
+            # EMPEZAR TOKENIZACIÓN
             tokens = []
             for item in programa_list:
                 ans = lexer_instance.lexer(item)
                 tokens.extend(ans)  # Usamos extend en lugar de append para agregar todos los tokens a la lista
-            
-            print(" ")
-            print(tokens)
-            print(" ")
 
+            # EMPEZAR PARSER
             parser = Parser(tokens)
             res = parser.parse_programa()
             print(res)
+
+            # VERIFICAR GRAMATICA
 
             es_correcto, mensaje = verificar_gramatica(tokens)
             if es_correcto:
