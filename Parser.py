@@ -256,39 +256,39 @@ class Parser:
                 elif token_actual[1] == "drop":
                     self.avanzar()
                     # Verificar punctuator 'drop'
-                    self.verificar_punctuator('drop')
+                    self.verificar_punctuator('drop', "(")
                     # Verificar valor v
                     if (self.siguiente_token()[0] != "IDENTIFIER") and (self.siguiente_token()[0] != "CONSTANT"):
                         self.error("Se esperaba un valor o identificador para v después de 'drop'")
                     self.avanzar()
                     # Verificar punctuator 'drop'
-                    self.verificar_punctuator('drop')
+                    self.verificar_punctuator('drop', ")")
                     self.tomar_si_es_punto_y_coma()
 
                 # Command get
                 elif token_actual[1] == "get":
                     self.avanzar()
                     # Verificar punctuator 'get'
-                    self.verificar_punctuator('get')
+                    self.verificar_punctuator('get', "(")
                     # Verificar valor v
                     if (self.siguiente_token()[0] != "IDENTIFIER") and (self.siguiente_token()[0] != "CONSTANT"):
                         self.error("Se esperaba un valor o identificador para v después de 'get'")
                     self.avanzar()
                     # Verificar punctuator 'get'
-                    self.verificar_punctuator('get')
+                    self.verificar_punctuator('get', ")")
                     self.tomar_si_es_punto_y_coma()
 
                 # Command grab
                 elif token_actual[1] == "grab":
                     self.avanzar()
                     # Verificar punctuator 'grab'
-                    self.verificar_punctuator('grab')
+                    self.verificar_punctuator('grab', "(")
                     # Verificar valor v
                     if (self.siguiente_token()[0] != "IDENTIFIER") and (self.siguiente_token()[0] != "CONSTANT"):
                         self.error("Se esperaba un valor o identificador para v después de 'grab'")
                     self.avanzar()
                     # Verificar punctuator 'grab'
-                    self.verificar_punctuator('grab')
+                    self.verificar_punctuator('grab', ")")
                     self.tomar_si_es_punto_y_coma()
                    
                 # Command letGo
