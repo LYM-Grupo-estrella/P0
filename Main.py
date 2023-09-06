@@ -104,6 +104,7 @@ def iniciar_aplicacion():
             # VERIFICAR GRAMATICA
 
             es_correcto, mensaje = verificar_gramatica(tokens)
+            
             if es_correcto:
                 print("La gramática es correcta.")
             else:
