@@ -335,7 +335,7 @@ class Parser:
 
     # Funciones para crear objetos de condiciones
 
-    def parse_comando(self):
+    def parse_keyword(self):
         token_actual = self.siguiente_token()
         if token_actual[0] == "KEYWORD":
             if token_actual[1] == "if":
@@ -345,20 +345,20 @@ class Parser:
                 block1 = self.parse_bloque_comandos()
                 self.verificar_punctuator('if', "else")
                 block2 = self.parse_bloque_comandos()
-                #if_condition(condition, block1, block2) -- No logramos
+                #if_condition(condition, block1, block2) -- No logramos evaluar el if_condition
             elif token_actual[1] == "while":
                 # Parsear la estructura de bucle 'while'
                 self.avanzar()
                 condition = self.parse_condicion()
                 block = self.parse_bloque_comandos()
-                while_condition(condition, block)
+                #while_condition(condition, block) -- No logramos evaluar el while_condition
             elif token_actual[1] == "repeat":
                 # Parsear la estructura de repetición 'repeat'
                 self.avanzar()
                 times = int(self.siguiente_token()[1])
                 self.avanzar()  # Avanzar después del valor 'times'
                 block = self.parse_bloque_comandos()
-                repeat_times_condition(times, block)
+                #repeat_times_condition(times, block) -- No logramos evaluar el repeat_times_condition
 
     def parse_condicion(self):
         token_actual = self.siguiente_token()
@@ -371,21 +371,21 @@ class Parser:
                 direction = self.siguiente_token()[1]
                 self.verificar_direccion_valida(direction)
                 self.verificar_punctuator('facing', ")")
-                return facing_condition(direction)
+                #return facing_condition(direction) -- No logramos evaluar el facing_condition
             elif token_actual[1] == "can":
                 # Parsear la condición 'can'
                 self.avanzar()
                 self.verificar_punctuator('can', "(")
                 command = self.siguiente_token()[1]
                 self.verificar_punctuator('can', ")")
-                return can_condition(command)
+                #return can_condition(command) -- No logramos evaluar el can_condition
             elif token_actual[1] == "not":
                 # Parsear la condición 'not'
                 self.avanzar()
                 self.verificar_punctuator('not', "(")
                 inner_condition = self.parse_condicion()
                 self.verificar_punctuator('not', ")")
-                return not_condition(inner_condition)
+                #return not_condition(inner_condition) -- No logramos evaluar el not_condition
             
         
 #AUXILIARES
