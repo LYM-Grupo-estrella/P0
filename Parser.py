@@ -121,7 +121,9 @@ class Parser:
         self.funct_actual = ""
 
     def parse_definicion_while(self):
+        print(self.tokens[self.pos_actual()])
         return None
+    
 
 
 
@@ -163,7 +165,7 @@ class Parser:
     def parse_comando(self):
         token_actual:str = self.siguiente_token()
         brackets = 1
-        while token_actual[0] != "x" or self.pos_actual == len(token_actual)-1:
+        while token_actual[1] != "while" or self.pos_actual == len(token_actual)-1:
 
             token_actual = self.siguiente_token()
             if token_actual[0] == "COMMAND":
@@ -347,8 +349,11 @@ class Parser:
                     brackets -= 1
                     if brackets == 0:
                         return True
-            else:
-                self.error(f"Comando no reconocido: {token_actual[1]}")
+                    
+        
+            break
+           # else:
+            #    self.error(f"Comando no reconocido: {token_actual[1]}")
 
 
 #AUXILIARES
