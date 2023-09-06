@@ -371,21 +371,21 @@ class Parser:
                 direction = self.siguiente_token()[1]
                 self.verificar_direccion_valida(direction)
                 self.verificar_punctuator('facing', ")")
-                #return facing_condition(direction) -- No logramos evaluar el facing_condition
+                
             elif token_actual[1] == "can":
                 # Parsear la condición 'can'
                 self.avanzar()
                 self.verificar_punctuator('can', "(")
                 command = self.siguiente_token()[1]
                 self.verificar_punctuator('can', ")")
-                #return can_condition(command) -- No logramos evaluar el can_condition
+                
             elif token_actual[1] == "not":
                 # Parsear la condición 'not'
                 self.avanzar()
                 self.verificar_punctuator('not', "(")
                 inner_condition = self.parse_condicion()
                 self.verificar_punctuator('not', ")")
-                #return not_condition(inner_condition) -- No logramos evaluar el not_condition
+                
             
         
 #AUXILIARES
