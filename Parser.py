@@ -42,12 +42,12 @@ class Parser:
                         self.error(f"Token no reconocido: {token_actual[1]}")
                 else:
                     self.parse_comando()
-                self.avanzar() # Avanzar al siguiente token
-            return True  # Si todo es correcto    
+                self.avanzar() # Avanzar al siguiente token  
+            return ("") 
 
         except Exception as e:
             print(f"Error: {e}")  # Imprime el error
-            return False  # Indica que hubo un error
+        return ("") 
 
 #KEYWORDS
 
@@ -324,7 +324,70 @@ class Parser:
             else:
                 self.error(f"Comando no reconocido: {token_actual[1]}")
 
+    
+    #INTENTO DE CONDICIONALES
+    
+    # Función para verificar que una dirección sea válida
+    def verificar_direccion_valida(direction):
+        direcciones_validas = ["north", "south", "east", "west"]
+        if direction not in direcciones_validas:
+            raise Exception(f"Dirección no válida: {direction}")
 
+    # Funciones para crear objetos de condiciones
+
+    def parse_comando(self):
+        token_actual = self.siguiente_token()
+        if token_actual[0] == "KEYWORD":
+            if token_actual[1] == "if":
+                # Parsear la estructura condicional 'if'
+                self.avanzar()
+                condition = self.parse_condicion()
+                block1 = self.parse_bloque_comandos()
+                self.verificar_punctuator('if', "else")
+                block2 = self.parse_bloque_comandos()
+                #if_condition(condition, block1, block2) -- No logramos
+            elif token_actual[1] == "while":
+                # Parsear la estructura de bucle 'while'
+                self.avanzar()
+                condition = self.parse_condicion()
+                block = self.parse_bloque_comandos()
+                while_condition(condition, block)
+            elif token_actual[1] == "repeat":
+                # Parsear la estructura de repetición 'repeat'
+                self.avanzar()
+                times = int(self.siguiente_token()[1])
+                self.avanzar()  # Avanzar después del valor 'times'
+                block = self.parse_bloque_comandos()
+                repeat_times_condition(times, block)
+
+    def parse_condicion(self):
+        token_actual = self.siguiente_token()
+
+        if token_actual[0] == "CONDITION":
+            if token_actual[1] == "facing":
+                # Parsear la condición 'facing'
+                self.avanzar()
+                self.verificar_punctuator('facing', "(")
+                direction = self.siguiente_token()[1]
+                self.verificar_direccion_valida(direction)
+                self.verificar_punctuator('facing', ")")
+                return facing_condition(direction)
+            elif token_actual[1] == "can":
+                # Parsear la condición 'can'
+                self.avanzar()
+                self.verificar_punctuator('can', "(")
+                command = self.siguiente_token()[1]
+                self.verificar_punctuator('can', ")")
+                return can_condition(command)
+            elif token_actual[1] == "not":
+                # Parsear la condición 'not'
+                self.avanzar()
+                self.verificar_punctuator('not', "(")
+                inner_condition = self.parse_condicion()
+                self.verificar_punctuator('not', ")")
+                return not_condition(inner_condition)
+            
+        
 #AUXILIARES
 
 def manejar_parentesis(self):
@@ -349,3 +412,4 @@ def manejar_parentesis(self):
         self.error("Los paréntesis no están correctamente emparejados")
 
     return parametros
+
