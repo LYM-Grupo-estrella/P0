@@ -29,13 +29,10 @@ class Parser:
         if self.siguiente_token()[0] == "PUNCTUATOR" and self.siguiente_token()[1] == ';':
             self.avanzar()
         
-       
-        
     def parse_programa(self):
         try:
             while self.siguiente_token() is not None:
                 token_actual = self.siguiente_token()
-                
                 if token_actual[0] == 'KEYWORD':
                     if token_actual[1] == "defvar":
                         self.parse_definicion_variable()
@@ -45,9 +42,7 @@ class Parser:
                         self.error(f"Token no reconocido: {token_actual[1]}")
                 else:
                     self.parse_comando()
-                
-                self.avanzar()  # Avanzar al siguiente token
-
+                self.avanzar() # Avanzar al siguiente token
             return True  # Si todo es correcto    
 
         except Exception as e:
@@ -61,7 +56,7 @@ class Parser:
 
         if self.siguiente_token()[0] != 'IDENTIFIER':
             self.error("Se esperaba un nombre de variable después de 'defVar'")
-
+            
         nombre = self.siguiente_token()[1]
 
          # Verificar si la variable ya ha sido definida
@@ -140,12 +135,8 @@ class Parser:
             self.error("Se esperaba '}' para cerrar el bloque de comandos")
         self.avanzar()  # Salir del bloque
         
-     
-            
-        
         return comandos
 
-    
     def val_var_param(self, funct:str=""):
         res = self.siguiente_token()[1] in self.variables_definidas or self.siguiente_token()[0] == "CONSTANT"
         res *= self.procedimientos_definidos.get(funct, res)
@@ -163,17 +154,20 @@ class Parser:
                 if token_actual[1] == "jump":
                     self.avanzar()
                     # Verificar punctuator 'jump'
-                    self.verificar_punctuator('jump')
-                    # Verificar x
-                    if self.siguiente_token()[0] != "CONSTANT":
-                        self.error("Se esperaba un valor para x después de 'jump'")
-                    self.avanzar()
-                    # Verificar y
-                    if self.siguiente_token()[0] != "CONSTANT":
-                        self.error("Se esperaba un valor para y después de x en 'jump'")
-                    self.avanzar()
-                    # Verificar punctuator 'jump'
-                    self.verificar_punctuator('jump')
+                    self.verificar_punctuator('jump', "(")
+                    self.tokens:list
+                    parametros = len(self.tokens[self.pos_actual:self.tokens.index(("PUNCTUATOR", ")"), self.pos_actual)])
+                    if parametros == 2:
+                        if ( self.val_var_param(self.funct_actual) or self.siguiente_token()[0] != "CONSTANT"):
+                            self.error("Se esperaba un valor para x después de 'jump'")
+                        self.avanzar()
+                        self.verificar_punctuator('jump', ",")
+                        if ( self.val_var_param(self.funct_actual) or self.siguiente_token()[0] != "CONSTANT"):
+                            self.error("Se esperaba un valor para y después de 'jump'")
+                        self.avanzar()
+                        self.verificar_punctuator('jump', ")")
+                    else:
+                        self.error("Se esperaba dos valores para x e y después de 'jump'")
                     self.tomar_si_es_punto_y_coma()
 
                 # Command walk
@@ -182,17 +176,15 @@ class Parser:
                     # Verificar punctuator 'walk'
                     self.verificar_punctuator('walk', "(")
                     self.tokens:list
-                    # print(self.tokens.index(("PUNCTUATOR", ")"), self.pos_actual-1))
-                    # print(self.tokens[self.pos_actual:self.tokens.index(("PUNCTUATOR", ")"), self.pos_actual-1)])
                     parametros = len(self.tokens[self.pos_actual:self.tokens.index(("PUNCTUATOR", ")"), self.pos_actual)])
                     if parametros == 1:
                         if  ( self.val_var_param(self.funct_actual) ):
-                            self.error("Se esperaba un valor o identificador para v después de 'drop'")
+                            self.error("Se esperaba un valor o identificador para v después de 'walk'")
                         self.avanzar()
-                        self.verificar_punctuator('drop', ")")
+                        self.verificar_punctuator('walk', ")")
                     elif parametros == 3:
                         if  ( self.val_var_param(self.funct_actual)):
-                            self.error("Se esperaba un valor o identificador para v después de 'drop'")
+                            self.error("Se esperaba un valor o identificador para v después de 'walk'")
                         self.avanzar()
                         self.verificar_punctuator('walk', ",")
                         if ( self.val_var_param(self.funct_actual) or self.siguiente_token()[0] == "DIRECTION" or self.siguiente_token()[1] in ["front", "right", "left", "back"]):
@@ -203,85 +195,74 @@ class Parser:
                         self.error("Se esperaba un valor para v después de 'walk'")
                     self.tomar_si_es_punto_y_coma()
 
-
-                # Command leap 
+               # Command leap
                 elif token_actual[1] == "leap":
                     self.avanzar()
                     # Verificar punctuator 'leap'
-                    self.verificar_punctuator('leap')
-                    # Verificar el valor v
-                    if self.siguiente_token()[0] != "CONSTANT":
+                    self.verificar_punctuator('leap', "(")
+                    self.tokens:list
+                    parametros = len(self.tokens[self.pos_actual:self.tokens.index(("PUNCTUATOR", ")"), self.pos_actual)])
+                    if parametros == 1:
+                        if  ( self.val_var_param(self.funct_actual) ):
+                            self.error("Se esperaba un valor o identificador para v después de 'leap'")
+                        self.avanzar()
+                        self.verificar_punctuator('leap', ")")
+                    elif parametros == 3:
+                        if  ( self.val_var_param(self.funct_actual)):
+                            self.error("Se esperaba un valor o identificador para v después de 'leap'")
+                        self.avanzar()
+                        self.verificar_punctuator('leap', ",")
+                        if ( self.val_var_param(self.funct_actual) or self.siguiente_token()[0] == "DIRECTION" or self.siguiente_token()[1] in ["front", "right", "left", "back"]):
+                            self.error("Se esperaba un valor o identificador para v después de 'leap'")
+                        self.avanzar()
+                        self.verificar_punctuator('leap', ")")
+                    else:
                         self.error("Se esperaba un valor para v después de 'leap'")
-                    self.avanzar()
-                    # Si no hay más tokens después, significa que el formato es leap(v)
-                    if self.siguiente_token() is None:
-                        return
-                    # Comprobar dirección D u O
-                    if self.siguiente_token()[0] == "DIRECTION":
-                        if self.siguiente_token()[1] in ["front", "right", "left", "back"]:
-                            # Manejar el caso para leap(v, D)
-                            self.avanzar()
-                        elif self.siguiente_token()[1] in ["north", "south", "west", "east"]:
-                            # Manejar el caso para leap(v, O)
-                            self.avanzar()
-                        else:
-                            self.error(f"Se esperaba una dirección válida después de 'leap', pero se encontró {self.siguiente_token()[1]}")
-                    else:
-                        self.error(f"Se esperaba una dirección válida después de 'leap', pero se encontró {self.siguiente_token()[1]}")
-                    # Verificar punctuator 'leap'
-                    self.verificar_punctuator('leap')
                     self.tomar_si_es_punto_y_coma()
-
-                # Command turn 
-                elif token_actual[1] == "turn":
-                    self.avanzar()
-                    # Verificar punctuator 'turn'
-                    self.verificar_punctuator('turn')
-                    # Verificar dirección D
-                    if self.siguiente_token()[0] == "DIRECTION":
-                        if self.siguiente_token()[1] in ["left", "right", "around"]:
-                            # El robot debe girar 90 grados en la dirección indicada por el parámetro D
-                            self.avanzar()
-                        else:
-                            self.error(f"Se esperaba 'left', 'right' o 'around' después de 'turn', pero se encontró {self.siguiente_token()[1]}")
-                    else:
-                        self.error(f"Se esperaba una dirección válida después de 'turn', pero se encontró {self.siguiente_token()[1]}")
-                    # Verificar punctuator 'turn'
-                    self.verificar_punctuator('turn')
-                    self.tomar_si_es_punto_y_coma()
-
+                    
                 # Command turnto
                 elif token_actual[1] == "turnto":
                     self.avanzar()
                     # Verificar punctuator 'turnto'
-                    self.verificar_punctuator('turnto')
+                    self.verificar_punctuator('turnto', "(")
                     # Verificar dirección O
-                    if self.siguiente_token()[0] == "DIRECTION":
-                        if self.siguiente_token()[1] in ["north", "south", "east", "west"]:
-                            # El robot debe girar para terminar mirando en la dirección indicada por el parámetro O
-                            self.avanzar()
-                        else:
-                            self.error(f"Se esperaba 'north', 'south', 'east' o 'west' después de 'turnto', pero se encontró {self.siguiente_token()[1]}")
+                    if self.siguiente_token()[0] == "DIRECTION" and self.siguiente_token()[1] in ["north", "south", "east", "west"]:
+                        self.avanzar()
                     else:
-                        self.error(f"Se esperaba una dirección válida después de 'turnto', pero se encontró {self.siguiente_token()[1]}")
-                    # Verificar punctuator 'turnto'
-                    self.verificar_punctuator('turnto')
+                        self.error("Se esperaba 'north', 'south', 'east' o 'west' después de 'turnto'")
+                    # Verificar punctuator ')'
+                    self.verificar_punctuator('turnto', ")")
+                    self.tomar_si_es_punto_y_coma()
+
+                # Command turn
+                elif token_actual[1] == "turn":
+                    self.avanzar()
+                    # Verificar punctuator '('
+                    if self.siguiente_token()[1] != "(":
+                        self.error("Se esperaba '(' después de 'turn'")
+                    self.avanzar()
+                    # Verificar dirección D
+                    direccion = self.siguiente_token()[1]
+                    # Verificar que D sea un valor válido
+                    if direccion not in ["left", "right", "around"]:
+                        self.error(f"Valor no válido para D en 'turn': {direccion}")
+                    self.avanzar()
+                    # Verificar punctuator ')'
+                    if self.siguiente_token()[1] != ")":
+                        self.error("Se esperaba ')' después de la dirección en 'turn'")
                     self.tomar_si_es_punto_y_coma()
 
                 # Command drop
                 elif token_actual[1] == "drop":
                     self.avanzar()
                     # Verificar punctuator 'drop'
-                    self.verificar_punctuator('drop', "(")
+                    self.verificar_punctuator('drop')
                     # Verificar valor v
-
-
-                    if  ( self.val_var_param(self.funct_actual) ):
+                    if (self.siguiente_token()[0] != "IDENTIFIER") and (self.siguiente_token()[0] != "CONSTANT"):
                         self.error("Se esperaba un valor o identificador para v después de 'drop'")
-                        
                     self.avanzar()
                     # Verificar punctuator 'drop'
-                    self.verificar_punctuator('drop', ")")
+                    self.verificar_punctuator('drop')
                     self.tomar_si_es_punto_y_coma()
 
                 # Command get
@@ -309,32 +290,34 @@ class Parser:
                     # Verificar punctuator 'grab'
                     self.verificar_punctuator('grab')
                     self.tomar_si_es_punto_y_coma()
-                    
+                   
                 # Command letGo
                 elif token_actual[1] == "letgo":
                     self.avanzar()
                     # Verificar punctuator 'letgo'
                     self.verificar_punctuator('letgo', "(")
                     # Verificar valor v
-
-
                     if not (not self.val_var_param(self.funct_actual) and (self.siguiente_token()[0] != "CONSTANT")):
-                        self.error("Se esperaba un valor o identificador para v después de 'drop'")
+                        self.error("Se esperaba un valor o identificador para v después de 'letGo'")
                     self.avanzar()
                     # Verificar punctuator 'letgo'
                     self.verificar_punctuator('letgo', ")")
                     self.tomar_si_es_punto_y_coma()
-                    
+                   
                 # Command nop
                 elif token_actual[1] == "nop":
                     self.avanzar()
-                    # No requiere ningún otro token o verificación. No realiza ninguna acción
+                    # Verificar punctuator 'nop'
+                    self.verificar_punctuator('nop', "(")
+                    # No requiere ningún otro token o verificación. No realiza ninguna acción.
+                    self.verificar_punctuator('nop', ")")
+                    self.tomar_si_es_punto_y_coma()
+   
             elif token_actual[0] == "PUNCTUATOR":
                 if token_actual[1] == "{":
                     self.avanzar()
                     brackets += 1
                 elif token_actual[1] == "}":
-                    # self.avanzar()
                     brackets -= 1
                     if brackets == 0:
                         return True
@@ -366,9 +349,3 @@ def manejar_parentesis(self):
         self.error("Los paréntesis no están correctamente emparejados")
 
     return parametros
-
-
-Tokens = [('KEYWORD', 'defvar'), ('IDENTIFIER', 'nom'), ('CONSTANT', '1'), ('KEYWORD', 'defproc'), ('IDENTIFIER', 'putcb'), ('PUNCTUATOR', '('), ('IDENTIFIER', 'c'), ('PUNCTUATOR', ','), ('IDENTIFIER', 'b'),('PUNCTUATOR', ')')]
-# parser = Parser(Tokens)
-# parser.parse_programa()
-#print("Variables definidass:", parser.variables_definidas
