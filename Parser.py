@@ -41,8 +41,12 @@ class Parser:
                         self.parse_definicion_variable()
                     elif token_actual[1] == "defproc":
                         self.parse_definicion_procedimiento()
+                    
+                    elif token_actual[1] == "while":
+                        self.parse_definicion_while()
                     else:
                         self.error(f"Token no reconocido: {token_actual[1]}")
+                        
                 else:
                     self.parse_comando()
                 
@@ -115,6 +119,11 @@ class Parser:
         self.funct_actual = nombre
         bloque_comandos = self.parse_bloque_comandos(parametros)
         self.funct_actual = ""
+
+    def parse_definicion_while(self):
+        return None
+
+
 
 #BLOQUE
 
@@ -367,8 +376,3 @@ def manejar_parentesis(self):
 
     return parametros
 
-
-Tokens = [('KEYWORD', 'defvar'), ('IDENTIFIER', 'nom'), ('CONSTANT', '1'), ('KEYWORD', 'defproc'), ('IDENTIFIER', 'putcb'), ('PUNCTUATOR', '('), ('IDENTIFIER', 'c'), ('PUNCTUATOR', ','), ('IDENTIFIER', 'b'),('PUNCTUATOR', ')')]
-# parser = Parser(Tokens)
-# parser.parse_programa()
-#print("Variables definidass:", parser.variables_definidas
